@@ -22,6 +22,6 @@ go.work
 
 .vscode
 .DS_Store
-config
-secret
+config/*
+secret/*
 bin/*

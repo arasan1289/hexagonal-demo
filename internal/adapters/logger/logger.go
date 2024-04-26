@@ -70,6 +70,7 @@ func NewGormLogger() logger.Interface {
 	return &gormLogger{logger: GetLogger()}
 }
 
+// LogMode implements the gorm.Logger interface.
 func (gl *gormLogger) LogMode(level logger.LogLevel) logger.Interface {
 	newLogger := gl.logger
 	switch level {
@@ -89,6 +90,7 @@ func (gl *gormLogger) LogMode(level logger.LogLevel) logger.Interface {
 	}
 }
 
+// Trace implements the gorm.Logger interface.
 func (gl *gormLogger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
 	// elapsed := time.Since(begin)
 
@@ -115,16 +117,19 @@ func (gl *gormLogger) Trace(ctx context.Context, begin time.Time, fc func() (str
 			gl.logger.Debug().
 				Str("module", "gorm").
 				Str("sql", sql).
+				Int64("duration_ms", duration).
 				Msg("Record not found")
 		case gorm.ErrDuplicatedKey:
 			gl.logger.Error().
 				Str("module", "gorm").
+				Int64("duration_ms", duration).
 				Str("sql", sql).Err(err).
 				Msg("Duplicate key")
 		default:
 			gl.logger.Error().
 				Str("module", "gorm").
 				Str("sql", sql).
+				Int64("duration_ms", duration).
 				Err(err).
 				Msg("Query execution failed")
 		}
@@ -138,14 +143,17 @@ func (gl *gormLogger) Trace(ctx context.Context, begin time.Time, fc func() (str
 	}
 }
 
+// Info implements the gorm.Logger interface.
 func (gl *gormLogger) Info(ctx context.Context, msg string, data ...interface{}) {
 	gl.logger.Info().Msgf(msg, data...)
 }
 
+// Warn implements the gorm.Logger interface.
 func (gl *gormLogger) Warn(ctx context.Context, msg string, data ...interface{}) {
 	gl.logger.Warn().Msgf(msg, data...)
 }
 
+// Error implements the gorm.Logger interface.
 func (gl *gormLogger) Error(ctx context.Context, msg string, data ...interface{}) {
 	gl.logger.Error().Msgf(msg, data...)
 }

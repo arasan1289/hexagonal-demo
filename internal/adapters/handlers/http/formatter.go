@@ -27,11 +27,13 @@ func NewJSONFormatter() *JSONFormatter {
 	return &JSONFormatter{}
 }
 
+// ValidationError is a struct that represents structured error
 type ValidationError struct {
 	Field  string `json:"field"`
 	Reason string `json:"reason"`
 }
 
+// Descriptive will return a list of ValidationErrors
 func (JSONFormatter) Descriptive(verr validator.ValidationErrors) []ValidationError {
 	errs := []ValidationError{}
 
@@ -46,6 +48,7 @@ func (JSONFormatter) Descriptive(verr validator.ValidationErrors) []ValidationEr
 	return errs
 }
 
+// Simple will return a map of field name to error message
 func (JSONFormatter) Simple(verr validator.ValidationErrors) map[string]string {
 	errs := make(map[string]string)
 

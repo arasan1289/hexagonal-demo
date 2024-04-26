@@ -30,7 +30,6 @@ var (
 	ErrForbidden = errors.New("user is forbidden to access the resource")
 	// ErrRateLimitExceeded is an error for when set limit exceeded for that time period
 	ErrRateLimitExceeded = errors.New("rate limit exceeded")
-
 	// OTP expired
 	ErrOTPExpired = errors.New("OTP expired")
 	// OTP mismatch

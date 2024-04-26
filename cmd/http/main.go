@@ -26,6 +26,7 @@ func main() {
 		fmt.Println("Error initializing logger:", err)
 		os.Exit(1)
 	}
+	// Initialize Gorm custom logger
 	customGormLogger := logger.NewGormLogger()
 	// Initialize DB
 	conn, err := postgres.New(config.DB, customGormLogger)
@@ -35,11 +36,13 @@ func main() {
 	}
 	defer conn.Close()
 	log.Info().Msg("Successfully connected to DB")
-	log.Info().Int("level", int(log.GetLevel())).Msg("Log level")
 
+	// Migrate DB
 	conn.Migrate(&domain.User{})
 
 	log.Info().Msg("Successfully migrated user table")
+
+	// Initialize Handlers
 	userRepo := repository.NewUserRepository(conn)
 	userSvc := service.NewUserService(userRepo, log)
 	UserHandler := http.NewUserHandler(userSvc, config.App, log)
@@ -47,6 +50,7 @@ func main() {
 	otpSvc := service.NewOtpService(log, config.App)
 	OtpHandler := http.NewOtpHandler(otpSvc, userSvc, log, config.App)
 
+	// Initialize router
 	router, err := http.NewRouter(config, log, *UserHandler, *OtpHandler)
 	if err != nil {
 		log.Error().Err(err).Msg("Error Initializing router")

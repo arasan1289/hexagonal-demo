@@ -15,16 +15,19 @@ type OtpHandler struct {
 	config  *config.App
 }
 
+// NewOtpHandler creates a new instance of OtpHandler
 func NewOtpHandler(svc port.OtpService, userSvc port.UserService, log *logger.Logger, config *config.App) *OtpHandler {
 	return &OtpHandler{
 		svc, userSvc, log, config,
 	}
 }
 
+// requestOtp is the request body for the request otp endpoint
 type requestOtp struct {
 	PhoneNumber string `json:"phone_number" binding:"required,min=10" example:"9876543210"`
 }
 
+// RequestOtp is the handler for the request otp endpoint
 func (oh *OtpHandler) RequestOtp(ctx *gin.Context) {
 	var req requestOtp
 
@@ -46,12 +49,14 @@ func (oh *OtpHandler) RequestOtp(ctx *gin.Context) {
 	handleSuccess(ctx, rsp)
 }
 
+// verifyOtp is the request body for the verify otp endpoint
 type verifyOtp struct {
 	Otp         string `json:"otp" binding:"required,min=6" example:"123456"`
 	OtpHash     string `json:"otp_hash" binding:"required"`
 	PhoneNumber string `json:"phone_number" binding:"required"`
 }
 
+// VerifyOtp is the handler for verify otp endpoint
 func (oh *OtpHandler) VerifyOtp(ctx *gin.Context) {
 	var req verifyOtp
 

@@ -17,6 +17,7 @@ type Router struct {
 	*gin.Engine
 }
 
+// NewRouter creates a new Router instance
 func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHandler, otpHandler OtpHandler) (*Router, error) {
 	// Disable debug mode in production
 	if config.App.Env == "prod" {
@@ -29,6 +30,7 @@ func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHan
 
 	router := gin.New()
 
+	// Bind json name as Field() in Validator
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterTagNameFunc(func(fld reflect.StructField) string {
 			name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
@@ -38,9 +40,11 @@ func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHan
 			return name
 		})
 	}
+
 	// Middlewares
 	router.Use(GinStructuredLogger(log))
 	router.Use(gin.Recovery(), cors.New(ginConfig))
+
 	// Rate limiter
 	rateLimit := NewRateLimiter(1, 0)
 

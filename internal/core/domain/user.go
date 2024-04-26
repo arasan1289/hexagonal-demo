@@ -2,6 +2,7 @@ package domain
 
 import "time"
 
+// UserRole defines user roles
 type UserRole string
 
 const (
@@ -10,6 +11,7 @@ const (
 	Customer UserRole = "CUS"
 )
 
+// User represents a user in the system
 type User struct {
 	ID                    string    `json:"id"`
 	FirstName             *string   `json:"first_name"`

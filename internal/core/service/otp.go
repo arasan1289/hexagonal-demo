@@ -22,7 +22,7 @@ type OtpService struct {
 	config *config.App
 }
 
-// NewOtpService returns a new instance of OtpService
+// NewOtpService constructor function
 func NewOtpService(log *logger.Logger, config *config.App) port.OtpService {
 	return &OtpService{
 		log:    log,

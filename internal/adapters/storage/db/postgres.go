@@ -17,6 +17,7 @@ type Conn struct {
 	url string
 }
 
+// New creates a new GORM connection.
 func New(config *config.DB, logger logger.Interface) (*Conn, error) {
 	// Connect to the PostgreSQL database
 	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
@@ -39,6 +40,7 @@ func New(config *config.DB, logger logger.Interface) (*Conn, error) {
 	return &Conn{db, connectionString}, nil
 }
 
+// Set sets the connection pool.
 func (c *Conn) Set() error {
 	db, err := c.DB.DB()
 	if err != nil {
@@ -50,11 +52,14 @@ func (c *Conn) Set() error {
 	return nil
 }
 
+// Migrate migrates the models to the DB
+// TODO: Switch to any migrator interface
 func (c *Conn) Migrate(models ...interface{}) error {
 	// Auto migrate the models
 	return c.DB.AutoMigrate(models...)
 }
 
+// Close closes the connection
 func (c *Conn) Close() error {
 	db, err := c.DB.DB()
 	if err != nil {

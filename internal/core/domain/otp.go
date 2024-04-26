@@ -1,6 +1,10 @@
 package domain
 
+// OTP (One-Time Password) struct with Otp and OtpHash fields.
 type OTP struct {
-	Otp     string `json:"otp"`
+	// Actual OTP value.
+	Otp string `json:"otp"`
+
+	// Hashed OTP value.
 	OtpHash string `json:"otp_hash"`
 }

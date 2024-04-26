@@ -11,12 +11,14 @@ import (
 	"github.com/oklog/ulid/v2"
 )
 
+// GenerateULID: create unique identifier using ULID library
 func GenerateULID() string {
 	entropy := ulid.Monotonic(rand.Reader, 0)
 	id := ulid.MustNew(ulid.Timestamp(time.Now()), entropy)
 	return id.String()
 }
 
+// HashString: generate SHA-256 hash of input string
 func HashString(str string) string {
 	hash := sha256.New()
 	hash.Write([]byte(str))
@@ -24,6 +26,7 @@ func HashString(str string) string {
 	return hex.EncodeToString(hb)
 }
 
+// EncryptString: encrypt input string using AES-GCM encryption
 func EncryptString(str string, secret string) (string, error) {
 	key := []byte(secret)
 
@@ -47,6 +50,7 @@ func EncryptString(str string, secret string) (string, error) {
 	return hex.EncodeToString(encStr), nil
 }
 
+// DecryptString: decrypt input string using AES-GCM decryption
 func DecryptString(encStr string, secret string) (string, error) {
 	key := []byte(secret)
 

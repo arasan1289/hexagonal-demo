@@ -10,11 +10,13 @@ import (
 	"github.com/arasan1289/hexagonal-demo/internal/core/util"
 )
 
+// UserService struct represents the user service with its dependencies
 type UserService struct {
-	repo port.UserRepository
-	log  *logger.Logger
+	repo port.UserRepository // user repository interface
+	log  *logger.Logger      // logger instance
 }
 
+// NewUserService constructor function
 func NewUserService(repo port.UserRepository, log *logger.Logger) port.UserService {
 	return &UserService{
 		repo: repo,
@@ -22,6 +24,7 @@ func NewUserService(repo port.UserRepository, log *logger.Logger) port.UserServi
 	}
 }
 
+// Register function: encrypt phone number, generate ID if needed, upsert user
 func (us *UserService) Register(ctx context.Context, user *domain.User, config *config.App) (*domain.User, error) {
 	phoneNumberEnc, err := util.EncryptString(user.PhoneNumber, config.SecretKey)
 	if err != nil {
@@ -41,6 +44,7 @@ func (us *UserService) Register(ctx context.Context, user *domain.User, config *
 	return usr, nil
 }
 
+// GetUser function: retrieve user by ID, decrypt phone number
 func (us *UserService) GetUser(ctx context.Context, id string, config *config.App) (*domain.User, error) {
 	usr, err := us.repo.GetUser(ctx, id)
 	if err != nil {
@@ -54,6 +58,7 @@ func (us *UserService) GetUser(ctx context.Context, id string, config *config.Ap
 	return usr, nil
 }
 
+// GetUserByPhoneNumber function: retrieve user by phone number hash
 func (us *UserService) GetUserByPhoneNumber(ctx context.Context, phoneNumber string) (*domain.User, error) {
 	us.log.Info().Msg("Get user by phone number")
 	phoneNumberHash := util.HashString(phoneNumber)

@@ -7,20 +7,26 @@ import (
 	"github.com/arasan1289/hexagonal-demo/internal/core/domain"
 )
 
+// UserRepository interface defines the methods for interacting with the user repository
 type UserRepository interface {
+	// UpsertUser inserts or updates a user in the repository
 	UpsertUser(ctx context.Context, user *domain.User) (*domain.User, error)
-	// UpdateUser(ctx context.Context, user *domain.User) (*domain.User, error)
+
+	// GetUser retrieves a user from the repository by ID
 	GetUser(ctx context.Context, id string) (*domain.User, error)
+
+	// GetUserByPhoneNumber retrieves a user from the repository by phone number hash
 	GetUserByPhoneNumber(ctx context.Context, hash string) (*domain.User, error)
-	// ListUsers(ctx context.Context) ([]domain.User, error)
-	// DeleteUser(ctx context.Context, id string) (bool, error)
 }
 
+// UserService interface defines the methods for interacting with the user service
 type UserService interface {
+	// Register creates a new user and saves it to the repository
 	Register(ctx context.Context, user *domain.User, conf *config.App) (*domain.User, error)
+
+	// GetUser retrieves a user from the repository by ID
 	GetUser(ctx context.Context, id string, conf *config.App) (*domain.User, error)
+
+	// GetUserByPhoneNumber retrieves a user from the repository by phone number
 	GetUserByPhoneNumber(ctx context.Context, phoneNumber string) (*domain.User, error)
-	// ListUsers(ctx context.Context, skip, limit uint64) ([]domain.User, error)
-	// UpdateUser(ctx context.Context, user *domain.User) (*domain.User, error)
-	// DeleteUser(ctx context.Context, id string) (bool, error)
 }
