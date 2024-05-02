@@ -10,13 +10,13 @@ import (
 
 // UserHandler handles HTTP requests related to user management
 type UserHandler struct {
-	svc    port.UserService // user service
-	config *config.App      // app configuration
-	log    *logger.Logger   // logger
+	svc    port.IUserService // user service
+	config *config.App       // app configuration
+	log    *logger.Logger    // logger
 }
 
 // NewUserHandler creates a new UserHandler instance
-func NewUserHandler(svc port.UserService, config *config.App, log *logger.Logger) *UserHandler {
+func NewUserHandler(svc port.IUserService, config *config.App, log *logger.Logger) *UserHandler {
 	return &UserHandler{
 		svc:    svc,
 		config: config,
@@ -41,8 +41,9 @@ func (uh *UserHandler) Register(ctx *gin.Context) {
 
 	user := domain.User{
 		PhoneNumber: req.PhoneNumber,
-		FirstName:   &req.FirstName,
-		LastName:    &req.LastName,
+		FirstName:   req.FirstName,
+		LastName:    req.LastName,
+		Role:        domain.Admin,
 	}
 
 	rsp, err := uh.svc.Register(ctx, &user, uh.config)

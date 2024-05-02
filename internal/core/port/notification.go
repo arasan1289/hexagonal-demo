@@ -1,7 +1,7 @@
 package port
 
-// NotificationService interface defines methods for sending notifications (SMS, Email, Push, Whatsapp).
-type NotificationService interface {
+// INotificationService interface defines methods for sending notifications (SMS, Email, Push, Whatsapp).
+type INotificationService interface {
 	// SendSMS sends an SMS to the specified recipient using the given template.
 	SendSMS(to string, template string) (bool, error)
 

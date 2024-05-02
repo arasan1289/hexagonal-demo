@@ -12,12 +12,12 @@ import (
 
 // UserService struct represents the user service with its dependencies
 type UserService struct {
-	repo port.UserRepository // user repository interface
-	log  *logger.Logger      // logger instance
+	repo port.IUserRepository // user repository interface
+	log  *logger.Logger       // logger instance
 }
 
 // NewUserService constructor function
-func NewUserService(repo port.UserRepository, log *logger.Logger) port.UserService {
+func NewUserService(repo port.IUserRepository, log *logger.Logger) port.IUserService {
 	return &UserService{
 		repo: repo,
 		log:  log,

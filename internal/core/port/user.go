@@ -7,8 +7,8 @@ import (
 	"github.com/arasan1289/hexagonal-demo/internal/core/domain"
 )
 
-// UserRepository interface defines the methods for interacting with the user repository
-type UserRepository interface {
+// IUserRepository interface defines the methods for interacting with the user repository
+type IUserRepository interface {
 	// UpsertUser inserts or updates a user in the repository
 	UpsertUser(ctx context.Context, user *domain.User) (*domain.User, error)
 
@@ -20,7 +20,7 @@ type UserRepository interface {
 }
 
 // UserService interface defines the methods for interacting with the user service
-type UserService interface {
+type IUserService interface {
 	// Register creates a new user and saves it to the repository
 	Register(ctx context.Context, user *domain.User, conf *config.App) (*domain.User, error)
 

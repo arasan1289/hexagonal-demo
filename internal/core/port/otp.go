@@ -7,7 +7,7 @@ import (
 )
 
 // OtpService defines the interface for OTP related operations
-type OtpService interface {
+type IOtpService interface {
 	// GenerateOTP generates a new OTP with the given length
 	GenerateOTP(ctx context.Context, length uint) (*domain.OTP, error)
 

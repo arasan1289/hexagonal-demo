@@ -9,14 +9,14 @@ import (
 )
 
 type OtpHandler struct {
-	svc     port.OtpService
-	userSvc port.UserService
+	svc     port.IOtpService
+	userSvc port.IUserService
 	log     *logger.Logger
 	config  *config.App
 }
 
 // NewOtpHandler creates a new instance of OtpHandler
-func NewOtpHandler(svc port.OtpService, userSvc port.UserService, log *logger.Logger, config *config.App) *OtpHandler {
+func NewOtpHandler(svc port.IOtpService, userSvc port.IUserService, log *logger.Logger, config *config.App) *OtpHandler {
 	return &OtpHandler{
 		svc, userSvc, log, config,
 	}

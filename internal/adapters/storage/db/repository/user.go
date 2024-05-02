@@ -15,7 +15,7 @@ type UserRepository struct {
 }
 
 // NewUserRepository creates a new instance of UserRepository with the provided database connection.
-func NewUserRepository(conn *postgres.Conn) port.UserRepository {
+func NewUserRepository(conn *postgres.Conn) port.IUserRepository {
 	return &UserRepository{
 		db: conn,
 	}
