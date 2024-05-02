@@ -12,19 +12,19 @@ import (
 
 // response represents a response body format
 type response struct {
-	Success          bool `json:"success"`
-	Data             any  `json:"data,omitempty"`
-	Errors           any  `json:"errors,omitempty"`
-	DescriptiveError any  `json:"descriptive_error,omitempty"`
+	Success           bool              `json:"success"`
+	Data              any               `json:"data,omitempty"`
+	Errors            map[string]string `json:"errors,omitempty"`
+	DescriptiveErrors []ValidationError `json:"descriptive_errors,omitempty"`
 }
 
 // newResponse is a helper function to create a response body
-func newResponse(success bool, data any, errors any, descriptiveErrs any) response {
+func newResponse(success bool, data any, errors map[string]string, descriptiveErrs []ValidationError) response {
 	return response{
-		Success:          success,
-		Data:             data,
-		Errors:           errors,
-		DescriptiveError: descriptiveErrs,
+		Success:           success,
+		Data:              data,
+		Errors:            errors,
+		DescriptiveErrors: descriptiveErrs,
 	}
 }
 
@@ -48,21 +48,40 @@ var errorStatusMap = map[error]int{
 }
 
 // parseError parses error messages from the error object and returns a slice of error messages
-func parseError(ctx *gin.Context, err error) (simple map[string]string, descriptive []ValidationError) {
-	errMsgs := make(map[string]string)
+func parseError(ctx *gin.Context, err error) (map[string]string, []ValidationError) {
+	var errMsgs = make(map[string]string)
 	var descriptiveError []ValidationError
-	jsonFormatter := NewJSONFormatter()
 
-	if errors.As(err, &validator.ValidationErrors{}) {
-		errMsgs = jsonFormatter.Simple(err.(validator.ValidationErrors))
-		descriptiveError = jsonFormatter.Descriptive(err.(validator.ValidationErrors))
-		for _, err := range err.(validator.ValidationErrors) {
+	// Check if the error is a validation error
+	var validationErr validator.ValidationErrors
+	if errors.As(err, &validationErr) {
+		// Determine error type (simple or descriptive)
+		errorType := ctx.Query("error_type")
+
+		// Log each validation error
+		for _, err := range validationErr {
 			ctx.Error(err)
 		}
+
+		// Generate error messages based on error type
+		jsonFormatter := NewJSONFormatter()
+		if errorType == "descriptive" {
+			descriptiveError = jsonFormatter.Descriptive(validationErr)
+		} else {
+			errMsgs = jsonFormatter.Simple(validationErr)
+		}
 	} else {
+		// Log the error
 		ctx.Error(err)
+
+		// Add a generic error message
 		errMsgs["message"] = err.Error()
-		descriptiveError = append(descriptiveError, ValidationError{Field: "message", Reason: err.Error()})
+
+		// If descriptive error is requested, append to list
+		errorType := ctx.Query("error_type")
+		if errorType == "descriptive" {
+			descriptiveError = append(descriptiveError, ValidationError{Field: "message", Reason: err.Error()})
+		}
 	}
 
 	return errMsgs, descriptiveError
