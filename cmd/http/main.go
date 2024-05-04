@@ -29,7 +29,7 @@ func main() {
 	// Initialize Gorm custom logger
 	customGormLogger := logger.NewGormLogger()
 	// Initialize DB
-	conn, err := postgres.New(config.DB, customGormLogger)
+	conn, err := postgres.New(config, customGormLogger)
 	if err != nil {
 		log.Error().Err(err).Msg("Error initializing Postgres DB")
 		os.Exit(1)

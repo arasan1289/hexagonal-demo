@@ -50,11 +50,6 @@ func (us *UserService) GetUser(ctx context.Context, id string, config *config.Ap
 	if err != nil {
 		return nil, err
 	}
-	phoneNumber, err := util.DecryptString(usr.PhoneNumberEncrypted, config.SecretKey)
-	if err != nil {
-		return nil, err
-	}
-	usr.PhoneNumber = phoneNumber
 	return usr, nil
 }
 
@@ -66,6 +61,5 @@ func (us *UserService) GetUserByPhoneNumber(ctx context.Context, phoneNumber str
 	if err != nil {
 		return nil, err
 	}
-	usr.PhoneNumber = phoneNumber
 	return usr, nil
 }

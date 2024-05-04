@@ -14,18 +14,19 @@ import (
 // Conn implements the DB interface using GORM.
 type Conn struct {
 	*gorm.DB
-	url string
+	url    string
+	config *config.Container
 }
 
 // New creates a new GORM connection.
-func New(config *config.DB, logger logger.Interface) (*Conn, error) {
+func New(config *config.Container, logger logger.Interface) (*Conn, error) {
 	// Connect to the PostgreSQL database
 	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		config.Host,
-		config.Port,
-		config.User,
-		config.Password,
-		config.Name)
+		config.DB.Host,
+		config.DB.Port,
+		config.DB.User,
+		config.DB.Password,
+		config.DB.Name)
 
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN:                  connectionString,
@@ -36,8 +37,8 @@ func New(config *config.DB, logger logger.Interface) (*Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	return &Conn{db, connectionString}, nil
+	db = db.InstanceSet("config", config)
+	return &Conn{db, connectionString, config}, nil
 }
 
 // Set sets the connection pool.
