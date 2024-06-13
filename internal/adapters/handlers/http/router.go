@@ -61,7 +61,6 @@ func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHan
 		}
 		v1.POST("/send-otp", rateLimit, otpHandler.RequestOtp)
 		v1.POST("/verify-otp", rateLimit, otpHandler.VerifyOtp)
-		v1.POST("/verify-jwt", otpHandler.VerifyJWT)
 	}
 
 	return &Router{
