@@ -19,10 +19,11 @@ type (
 	App struct {
 		Name           string `koanf:"name"`
 		Env            string `koanf:"env"`
-		SecretKey      string `koanf:"secretKey"`
-		OtpSecretKey   string `koanf:"otpSecretKey"`
+		SecretKey      string `koanf:"secretKey"`    // Used for encrypting Email and phone number
+		OtpSecretKey   string `koanf:"otpSecretKey"` // Used for verifying OTP
 		OtpLength      uint   `koanf:"otp_length"`
 		QueryThreshold uint   `koanf:"query_threshold"`
+		JWTSecret      string `koanf:"jwtSecret"`
 	}
 
 	// Database contains all the environment variables for the database

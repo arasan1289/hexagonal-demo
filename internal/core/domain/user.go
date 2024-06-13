@@ -61,5 +61,5 @@ func (u *User) AfterFind(tx *gorm.DB) (err error) {
 		}
 		u.Email = &e
 	}
-	return
+	return nil
 }

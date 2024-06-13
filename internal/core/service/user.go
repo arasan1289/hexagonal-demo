@@ -55,8 +55,8 @@ func (us *UserService) GetUser(ctx context.Context, id string, config *config.Ap
 
 // GetUserByPhoneNumber function: retrieve user by phone number hash
 func (us *UserService) GetUserByPhoneNumber(ctx context.Context, phoneNumber string) (*domain.User, error) {
-	us.log.Info().Msg("Get user by phone number")
 	phoneNumberHash := util.HashString(phoneNumber)
+	us.log.Info().Msgf("Get user by phone number: %s", phoneNumberHash)
 	usr, err := us.repo.GetUserByPhoneNumber(ctx, phoneNumberHash)
 	if err != nil {
 		return nil, err

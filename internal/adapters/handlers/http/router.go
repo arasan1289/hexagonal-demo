@@ -6,6 +6,7 @@ import (
 
 	"github.com/arasan1289/hexagonal-demo/internal/adapters/config"
 	"github.com/arasan1289/hexagonal-demo/internal/adapters/logger"
+	"github.com/arasan1289/hexagonal-demo/internal/core/port"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -18,7 +19,7 @@ type Router struct {
 }
 
 // NewRouter creates a new Router instance
-func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHandler, otpHandler OtpHandler) (*Router, error) {
+func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHandler, otpHandler OtpHandler, authService port.IAuthService) (*Router, error) {
 	// Disable debug mode in production
 	if config.App.Env == "prod" {
 		gin.SetMode(gin.ReleaseMode)
@@ -46,17 +47,21 @@ func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHan
 	router.Use(gin.Recovery(), cors.New(ginConfig))
 
 	// Rate limiter
-	rateLimit := NewRateLimiter(1, 0)
+	rateLimit := NewRateLimiter(100, 60)
+
+	// JWT authorization middleware
+	authMiddleware := NewJWTAuthMiddleware(authService)
 
 	v1 := router.Group("/v1")
 	{
 		user := v1.Group("/users")
 		{
 			user.POST("/", userHandler.Register)
-			user.GET("/:id", userHandler.GetUser)
+			user.GET("/:id", authMiddleware, rateLimit, userHandler.GetUser)
 		}
 		v1.POST("/send-otp", rateLimit, otpHandler.RequestOtp)
 		v1.POST("/verify-otp", rateLimit, otpHandler.VerifyOtp)
+		v1.POST("/verify-jwt", otpHandler.VerifyJWT)
 	}
 
 	return &Router{

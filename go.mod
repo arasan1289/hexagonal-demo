@@ -3,6 +3,7 @@ module github.com/arasan1289/hexagonal-demo
 go 1.22.1
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/rs/xid v1.5.0
 	gorm.io/driver/postgres v1.5.7
 )
@@ -10,11 +11,9 @@ require (
 require (
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
 	github.com/go-pkgz/expirable-cache v0.1.0 // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/kr/text v0.2.0 // indirect
-	github.com/markbates/goth v1.79.0 // indirect
-	golang.org/x/oauth2 v0.17.0 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
+	github.com/google/go-cmp v0.5.9 // indirect
+	github.com/kr/pretty v0.3.1 // indirect
+	github.com/rogpeppe/go-internal v1.12.0 // indirect
 )
 
 require (
@@ -54,7 +53,7 @@ require (
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/pelletier/go-toml/v2 v2.2.0 // indirect
 	github.com/redis/go-redis/v9 v9.5.1
-	github.com/rs/zerolog v1.32.0
+	github.com/rs/zerolog v1.33.0
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	golang.org/x/arch v0.7.0 // indirect

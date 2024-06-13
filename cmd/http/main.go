@@ -47,11 +47,13 @@ func main() {
 	userSvc := service.NewUserService(userRepo, log)
 	UserHandler := http.NewUserHandler(userSvc, config.App, log)
 
+	authSvc := service.NewAuthService(log, config.App)
+
 	otpSvc := service.NewOtpService(log, config.App)
-	OtpHandler := http.NewOtpHandler(otpSvc, userSvc, log, config.App)
+	OtpHandler := http.NewOtpHandler(otpSvc, userSvc, authSvc, log, config.App)
 
 	// Initialize router
-	router, err := http.NewRouter(config, log, *UserHandler, *OtpHandler)
+	router, err := http.NewRouter(config, log, *UserHandler, *OtpHandler, authSvc)
 	if err != nil {
 		log.Error().Err(err).Msg("Error Initializing router")
 	}

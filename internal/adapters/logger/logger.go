@@ -110,11 +110,10 @@ func (gl *gormLogger) Trace(ctx context.Context, begin time.Time, fc func() (str
 			Int64("duration_ms", duration).
 			Msg("Long-running query")
 	}
-
 	if err != nil {
 		switch err {
 		case gorm.ErrRecordNotFound:
-			gl.logger.Debug().
+			gl.logger.Error().
 				Str("module", "gorm").
 				Str("sql", sql).
 				Int64("duration_ms", duration).

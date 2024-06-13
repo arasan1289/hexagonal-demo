@@ -2,10 +2,12 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	postgres "github.com/arasan1289/hexagonal-demo/internal/adapters/storage/db"
 	"github.com/arasan1289/hexagonal-demo/internal/core/domain"
 	"github.com/arasan1289/hexagonal-demo/internal/core/port"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -44,7 +46,16 @@ func (ur *UserRepository) GetUser(ctx context.Context, id string) (*domain.User,
 // GetUserByPhoneNumber retrieves a user from the database by their phone number hash.
 func (ur *UserRepository) GetUserByPhoneNumber(ctx context.Context, phoneNumberHash string) (*domain.User, error) {
 	var user domain.User
-	result := ur.db.First(&user, "phone_number_hash=?", phoneNumberHash)
+	var result *gorm.DB
+	ur.db.Transaction(func(tx *gorm.DB) error {
+		c, ok := ur.db.InstanceGet("config")
+		if !ok {
+			return errors.New("config not found")
+		}
+		tx = tx.InstanceSet("config", c)
+		result = tx.First(&user, "phone_number_hash=?", phoneNumberHash)
+		return nil
+	})
 	if result.Error != nil {
 		return nil, result.Error
 	}

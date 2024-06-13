@@ -11,14 +11,15 @@ import (
 type OtpHandler struct {
 	svc     port.IOtpService
 	userSvc port.IUserService
+	authSvc port.IAuthService
 	log     *logger.Logger
 	config  *config.App
 }
 
 // NewOtpHandler creates a new instance of OtpHandler
-func NewOtpHandler(svc port.IOtpService, userSvc port.IUserService, log *logger.Logger, config *config.App) *OtpHandler {
+func NewOtpHandler(svc port.IOtpService, userSvc port.IUserService, authSvc port.IAuthService, log *logger.Logger, config *config.App) *OtpHandler {
 	return &OtpHandler{
-		svc, userSvc, log, config,
+		svc, userSvc, authSvc, log, config,
 	}
 }
 
@@ -82,8 +83,9 @@ func (oh *OtpHandler) VerifyOtp(ctx *gin.Context) {
 		return
 	}
 
-	if rsp {
+	if rsp && !user.IsPhoneNumberVerified {
 		user.IsPhoneNumberVerified = true
+		user.IsActive = true
 		user, err = oh.userSvc.Register(ctx, user, oh.config)
 		if err != nil {
 			handleError(ctx, err)
@@ -91,5 +93,10 @@ func (oh *OtpHandler) VerifyOtp(ctx *gin.Context) {
 		}
 	}
 
-	handleSuccess(ctx, user)
+	tokens, err := oh.authSvc.GenerateJWT(ctx, user)
+	if err != nil {
+		handleError(ctx, err)
+		return
+	}
+	handleSuccess(ctx, tokens)
 }
