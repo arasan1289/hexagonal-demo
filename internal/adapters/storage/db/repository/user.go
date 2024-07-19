@@ -36,7 +36,16 @@ func (ur *UserRepository) UpsertUser(ctx context.Context, user *domain.User) (*d
 // GetUser retrieves a user from the database by their ID.
 func (ur *UserRepository) GetUser(ctx context.Context, id string) (*domain.User, error) {
 	var user domain.User
-	result := ur.db.First(&user, "id=?", id)
+	var result *gorm.DB
+	ur.db.Transaction(func(tx *gorm.DB) error {
+		c, ok := ur.db.InstanceGet("config")
+		if !ok {
+			return errors.New("config not found")
+		}
+		tx = tx.InstanceSet("config", c)
+		result = tx.First(&user, "id=?", id)
+		return nil
+	})
 	if result.Error != nil {
 		return nil, result.Error
 	}

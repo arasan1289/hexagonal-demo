@@ -28,7 +28,16 @@ type requestOtp struct {
 	PhoneNumber string `json:"phone_number" binding:"required,min=10" example:"9876543210"`
 }
 
-// RequestOtp is the handler for the request otp endpoint
+//	@Summary		Request OTP
+//	@Description	Sends OTP to the number if its registered
+//	@Tags			Auth
+//	@Produce		json
+//	@Accept			json
+//	@Param			sendOTP	body		requestOtp	true	"Request OTP JSON"
+//	@Success		200		{object}	response{data=domain.OTP}
+//	@Failure		400		{object}	response
+//	@Failure		500		{object}	response
+//	@Router			/send-otp [post]
 func (oh *OtpHandler) RequestOtp(ctx *gin.Context) {
 	var req requestOtp
 
@@ -57,7 +66,16 @@ type verifyOtp struct {
 	PhoneNumber string `json:"phone_number" binding:"required"`
 }
 
-// VerifyOtp is the handler for verify otp endpoint
+//	@Summary		Verify OTP
+//	@Description	Verify the given OTP
+//	@Tags			Auth
+//	@Produce		json
+//	@Accept			json
+//	@Param			verifyOTP	body		verifyOtp	true	"Verify OTP JSON"
+//	@Success		200			{object}	response{data=domain.JWTToken}
+//	@Failure		400			{object}	response
+//	@Failure		500			{object}	response
+//	@Router			/verify-otp [post]
 func (oh *OtpHandler) VerifyOtp(ctx *gin.Context) {
 	var req verifyOtp
 

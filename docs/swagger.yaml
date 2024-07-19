@@ -1,0 +1,281 @@
+basePath: /api/v1
+definitions:
+  domain.JWTToken:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+      role:
+        type: string
+    type: object
+  domain.OTP:
+    properties:
+      otp:
+        description: Actual OTP value.
+        type: string
+      otp_hash:
+        description: Hashed OTP value.
+        type: string
+    type: object
+  domain.User:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      email:
+        type: string
+      email_encrypted:
+        type: string
+      email_hash:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      is_active:
+        type: boolean
+      is_email_verified:
+        type: boolean
+      is_phone_number_verified:
+        type: boolean
+      last_name:
+        type: string
+      phone_number:
+        type: string
+      phone_number_encrypted:
+        type: string
+      phone_number_hash:
+        type: string
+      updated_at:
+        type: string
+      user_role:
+        $ref: '#/definitions/domain.UserRole'
+    type: object
+  domain.UserRole:
+    enum:
+    - ADM
+    - RID
+    - CUS
+    type: string
+    x-enum-varnames:
+    - Admin
+    - Rider
+    - Customer
+  http.ValidationError:
+    properties:
+      field:
+        type: string
+      reason:
+        type: string
+    type: object
+  http.registerUser:
+    properties:
+      first_name:
+        example: Qwerty
+        minLength: 5
+        type: string
+      last_name:
+        example: A
+        minLength: 1
+        type: string
+      phone_number:
+        example: "9876543210"
+        minLength: 10
+        type: string
+    required:
+    - first_name
+    - last_name
+    - phone_number
+    type: object
+  http.requestOtp:
+    properties:
+      phone_number:
+        example: "9876543210"
+        minLength: 10
+        type: string
+    required:
+    - phone_number
+    type: object
+  http.response:
+    properties:
+      data: {}
+      descriptive_errors:
+        items:
+          $ref: '#/definitions/http.ValidationError'
+        type: array
+      errors:
+        additionalProperties:
+          type: string
+        type: object
+      success:
+        type: boolean
+    type: object
+  http.verifyOtp:
+    properties:
+      otp:
+        example: "123456"
+        minLength: 6
+        type: string
+      otp_hash:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - otp
+    - otp_hash
+    - phone_number
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: This is a swagger docs for Hexagonal API.
+  title: Hexagonal API
+  version: "1.0"
+paths:
+  /send-otp:
+    post:
+      consumes:
+      - application/json
+      description: Sends OTP to the number if its registered
+      parameters:
+      - description: Request OTP JSON
+        in: body
+        name: sendOTP
+        required: true
+        schema:
+          $ref: '#/definitions/http.requestOtp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.OTP'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Request OTP
+      tags:
+      - Auth
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new user in DB
+      parameters:
+      - description: User JSON
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/http.registerUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Register a new user
+      tags:
+      - User
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the user from DB based on ID
+      parameters:
+      - description: Search user by ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Get user by ID
+      tags:
+      - User
+  /verify-otp:
+    post:
+      consumes:
+      - application/json
+      description: Verify the given OTP
+      parameters:
+      - description: Verify OTP JSON
+        in: body
+        name: verifyOTP
+        required: true
+        schema:
+          $ref: '#/definitions/http.verifyOtp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/domain.JWTToken'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/http.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/http.response'
+      summary: Verify OTP
+      tags:
+      - Auth
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

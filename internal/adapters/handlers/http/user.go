@@ -31,7 +31,16 @@ type registerUser struct {
 	LastName    string `json:"last_name" binding:"required,min=1" example:"A"`
 }
 
-// Register handles the registration of a new user
+//	@Summary		Register a new user
+//	@Description	Registers a new user in DB
+//	@Tags			User
+//	@Produce		json
+//	@Accept			json
+//	@Param			user	body		registerUser	true	"User JSON"
+//	@Success		200		{object}	response{data=domain.User}
+//	@Failure		400		{object}	response
+//	@Failure		500		{object}	response
+//	@Router			/users [post]
 func (uh *UserHandler) Register(ctx *gin.Context) {
 	var req registerUser
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -60,7 +69,16 @@ type getUserRequest struct {
 	ID string `uri:"id" binding:"required,ulid"`
 }
 
-// GetUser handles the retrieval of a user by their ID
+//	@Summary		Get user by ID
+//	@Description	Retrieves the user from DB based on ID
+//	@Tags			User
+//	@Produce		json
+//	@Accept			json
+//	@Param			id	path		string	true	"Search user by ID"
+//	@Success		200	{object}	response{data=domain.User}
+//	@Failure		400	{object}	response
+//	@Failure		500	{object}	response
+//	@Router			/users/{id} [get]
 func (uh *UserHandler) GetUser(ctx *gin.Context) {
 	var req getUserRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {

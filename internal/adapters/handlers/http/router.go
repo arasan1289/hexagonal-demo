@@ -11,6 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // Router is a wrapper for HTTP router
@@ -52,7 +54,7 @@ func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHan
 	// JWT authorization middleware
 	authMiddleware := NewJWTAuthMiddleware(authService)
 
-	v1 := router.Group("/v1")
+	v1 := router.Group("/api/v1")
 	{
 		user := v1.Group("/users")
 		{
@@ -62,6 +64,7 @@ func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHan
 		v1.POST("/send-otp", rateLimit, otpHandler.RequestOtp)
 		v1.POST("/verify-otp", rateLimit, otpHandler.VerifyOtp)
 	}
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	return &Router{
 		router,

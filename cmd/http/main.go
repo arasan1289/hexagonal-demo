@@ -1,9 +1,22 @@
+//	@title			Hexagonal API
+//	@version		1.0
+//	@description	This is a swagger docs for Hexagonal API.
+
+//	@host		localhost:3000
+//	@BasePath	/api/v1
+
+//	@SecurityDefinitions.apiKey	Bearer
+//	@in							header
+//	@name						Authorization
+//	@schemes					http https
+
 package main
 
 import (
 	"fmt"
 	"os"
 
+	_ "github.com/arasan1289/hexagonal-demo/docs"
 	"github.com/arasan1289/hexagonal-demo/internal/adapters/config"
 	"github.com/arasan1289/hexagonal-demo/internal/adapters/handlers/http"
 	"github.com/arasan1289/hexagonal-demo/internal/adapters/logger"

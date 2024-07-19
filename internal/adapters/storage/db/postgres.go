@@ -32,7 +32,8 @@ func New(config *config.Container, logger logger.Interface) (*Conn, error) {
 		DSN:                  connectionString,
 		PreferSimpleProtocol: true,
 	}), &gorm.Config{
-		Logger: logger,
+		Logger:                 logger,
+		SkipDefaultTransaction: true,
 	})
 	if err != nil {
 		return nil, err
