@@ -7,3 +7,9 @@ type Product struct {
 	BasePrice      int                `json:"base_price" gorm:"type:int;not null"`
 	PricingDetails *map[string]string `json:"pricing_details" gorm:"type:jsonb"`
 }
+
+type ProductMeta struct {
+	BaseAutoIncModel
+	ProductID string `json:"product_id" gorm:"type:varchar;not null"`
+	ImageUrl  string `json:"image_url" gorm:"type:varchar;not null"`
+}

@@ -52,8 +52,8 @@ func (ur *UserRepository) GetUser(ctx context.Context, id string) (*domain.User,
 	return &user, nil
 }
 
-// GetUserByPhoneNumber retrieves a user from the database by their phone number hash.
-func (ur *UserRepository) GetUserByPhoneNumber(ctx context.Context, phoneNumberHash string) (*domain.User, error) {
+// GetUserByPhoneNumber retrieves a user from the database by their phone number hash or email hash.
+func (ur *UserRepository) GetUserByPhoneNumberOrEmail(ctx context.Context, hash string) (*domain.User, error) {
 	var user domain.User
 	var result *gorm.DB
 	ur.db.Transaction(func(tx *gorm.DB) error {
@@ -62,7 +62,7 @@ func (ur *UserRepository) GetUserByPhoneNumber(ctx context.Context, phoneNumberH
 			return errors.New("config not found")
 		}
 		tx = tx.InstanceSet("config", c)
-		result = tx.First(&user, "phone_number_hash=?", phoneNumberHash)
+		result = tx.Where("phone_number_hash=?", hash).Or("email_hash=?", hash).Take(&user)
 		return nil
 	})
 	if result.Error != nil {

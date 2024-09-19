@@ -21,7 +21,7 @@ type Router struct {
 }
 
 // NewRouter creates a new Router instance
-func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHandler, otpHandler OtpHandler, authService port.IAuthService) (*Router, error) {
+func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHandler, otpHandler OtpHandler, authService port.IAuthService, authhandler AuthHandler) (*Router, error) {
 	// Disable debug mode in production
 	if config.App.Env == "prod" {
 		gin.SetMode(gin.ReleaseMode)
@@ -63,6 +63,7 @@ func NewRouter(config *config.Container, log *logger.Logger, userHandler UserHan
 		}
 		v1.POST("/send-otp", rateLimit, otpHandler.RequestOtp)
 		v1.POST("/verify-otp", rateLimit, otpHandler.VerifyOtp)
+		v1.POST("/login", rateLimit, authhandler.Login)
 	}
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

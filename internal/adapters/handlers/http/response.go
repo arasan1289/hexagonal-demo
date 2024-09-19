@@ -45,6 +45,8 @@ var errorStatusMap = map[error]int{
 	domain.ErrRateLimitExceeded:          http.StatusTooManyRequests,
 	domain.ErrOTPExpired:                 http.StatusBadRequest,
 	domain.ErrOTPMismatch:                http.StatusBadRequest,
+	domain.ErrInvalidCredentials:         http.StatusBadRequest,
+	domain.ErrPasswordNotSet:             http.StatusBadRequest,
 }
 
 // parseError parses error messages from the error object and returns a slice of error messages

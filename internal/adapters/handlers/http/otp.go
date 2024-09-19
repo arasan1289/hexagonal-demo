@@ -45,7 +45,7 @@ func (oh *OtpHandler) RequestOtp(ctx *gin.Context) {
 		validationError(ctx, err)
 		return
 	}
-	_, err := oh.userSvc.GetUserByPhoneNumber(ctx, req.PhoneNumber)
+	_, err := oh.userSvc.GetUserByPhoneNumberOrEmail(ctx, req.PhoneNumber)
 	if err != nil {
 		handleError(ctx, err)
 		return
@@ -63,7 +63,7 @@ func (oh *OtpHandler) RequestOtp(ctx *gin.Context) {
 type verifyOtp struct {
 	Otp         string `json:"otp" binding:"required,min=6" example:"123456"`
 	OtpHash     string `json:"otp_hash" binding:"required"`
-	PhoneNumber string `json:"phone_number" binding:"required"`
+	PhoneNumber string `json:"phone_number" binding:"required, min=10" example:"9876543210"`
 }
 
 //	@Summary		Verify OTP
@@ -95,7 +95,7 @@ func (oh *OtpHandler) VerifyOtp(ctx *gin.Context) {
 		return
 	}
 
-	user, err := oh.userSvc.GetUserByPhoneNumber(ctx, req.PhoneNumber)
+	user, err := oh.userSvc.GetUserByPhoneNumberOrEmail(ctx, req.PhoneNumber)
 	if err != nil {
 		handleError(ctx, err)
 		return

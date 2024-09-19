@@ -16,7 +16,7 @@ type IUserRepository interface {
 	GetUser(ctx context.Context, id string) (*domain.User, error)
 
 	// GetUserByPhoneNumber retrieves a user from the repository by phone number hash
-	GetUserByPhoneNumber(ctx context.Context, hash string) (*domain.User, error)
+	GetUserByPhoneNumberOrEmail(ctx context.Context, hash string) (*domain.User, error)
 }
 
 // UserService interface defines the methods for interacting with the user service
@@ -27,6 +27,9 @@ type IUserService interface {
 	// GetUser retrieves a user from the repository by ID
 	GetUser(ctx context.Context, id string, conf *config.App) (*domain.User, error)
 
-	// GetUserByPhoneNumber retrieves a user from the repository by phone number
-	GetUserByPhoneNumber(ctx context.Context, phoneNumber string) (*domain.User, error)
+	// GetUserByPhoneNumberOrEmail retrieves a user from the repository by phone number email
+	GetUserByPhoneNumberOrEmail(ctx context.Context, str string) (*domain.User, error)
+
+	// GetUserAndComparePassword retrieves a user from repository by phone number or email and compares the password
+	GetUserAndComparePassword(ctx context.Context, email, password string) (*domain.User, bool, error)
 }

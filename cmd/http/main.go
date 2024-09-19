@@ -65,8 +65,10 @@ func main() {
 	otpSvc := service.NewOtpService(log, config.App)
 	OtpHandler := http.NewOtpHandler(otpSvc, userSvc, authSvc, log, config.App)
 
+	authhandler := http.NewAuthHandler(authSvc, userSvc, log)
+
 	// Initialize router
-	router, err := http.NewRouter(config, log, *UserHandler, *OtpHandler, authSvc)
+	router, err := http.NewRouter(config, log, *UserHandler, *OtpHandler, authSvc, *authhandler)
 	if err != nil {
 		log.Error().Err(err).Msg("Error Initializing router")
 	}
